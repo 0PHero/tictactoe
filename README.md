@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -60,6 +61,13 @@
                 <tbody id="leaderboardBody">
                 </tbody>
             </table>
+        </div>
+        <div id="whowon">
+            <br>
+            <a id="winner"></a>
+            <br>
+            <br>
+            <button onclick="resetGame();" id="resetBtn" hidden>Play again?</button>
         </div>
     </div>
 
@@ -162,6 +170,9 @@
         document.querySelectorAll('input[type="button"]').forEach(button => {
             button.style.backgroundColor = theme.buttonColor;
         });
+        document.querySelectorAll('button[id=resetBtn]').forEach(button => {
+            button.style.backgroundColor = theme.buttonColor;
+        });
         document.querySelectorAll('#leaderboard th').forEach(button => {
             button.style.backgroundColor = theme.buttonColor;
         });
@@ -250,16 +261,16 @@
                 gameBoard[index] = currentPlayer;
                 document.getElementsByClassName('cell')[index].innerHTML = currentPlayer;
                 if (checkWinner(currentPlayer)) {
-                    alert(currentPlayer + " wins!");
+                    document.getElementById("winner").innerHTML = currentPlayer + " wins!";
                     if (currentPlayer === 'X') {
                         updateStats('win');
                     } else {
                         updateStats('loss');
                     }
-                    resetGame();
+                    document.getElementById("resetBtn").hidden = false;
                 } else if (gameBoard.every(cell => cell !== '')) {
-                    alert("It's a draw!");
-                    resetGame();
+                    document.getElementById("winner").innerHTML = "It's a draw!";
+                    document.getElementById("resetBtn").hidden = false;
                 } else {
                     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
                     if (currentPlayer === 'O') {
@@ -275,9 +286,9 @@
                 if (checkWinner('O')) {
                     document.getElementsByClassName('cell')[i].innerHTML = 'O';
                     currentPlayer = 'X';
-                    alert("O wins!");
+                    document.getElementById("winner").innerHTML = "O wins!";
                     updateStats('loss');
-                    resetGame();
+                    document.getElementById("resetBtn").hidden = false;
                     return;
                 }
                 gameBoard[i] = '';
@@ -318,6 +329,8 @@
         }
 
         function resetGame() {
+            document.getElementById("winner").innerHTML = "";
+            document.getElementById("resetBtn").hidden = true;
             gameBoard = ['', '', '', '', '', '', '', '', ''];
             currentPlayer = 'X';
             Array.from(document.getElementsByClassName('cell')).forEach(cell => cell.innerHTML = '');
@@ -351,7 +364,6 @@
             setUsers(users);
             hideDeleteUserForm();
             logout();
-            alert('User deleted successfully.');
         }
 
         function updateStats(result) {
@@ -375,8 +387,10 @@
             leaderboardBody.innerHTML = '';
             users.forEach((user, index) => {
                 let row = document.createElement('tr');
+                let rank = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : index + 1;
+                console.log(rank);
                 row.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td>${rank}</td>
                     <td>${user.username}</td>
                     <td>${user.wins}</td>
                     <td>${user.losses}</td>
